@@ -38,7 +38,6 @@ public class FXMLDocumentController implements Initializable
 
     List<CardTile> cards = new ArrayList();
     List<CardTile> cardsBeingMatched = new ArrayList();//Used to keep up with the current two cards that are pressed inorder to deteremine if they are a match
-
     boolean isGameOver = false;
     final double cardsWidth = 50;
     final double cardsHeight = cardsWidth * 1.4;
@@ -54,19 +53,31 @@ public class FXMLDocumentController implements Initializable
 
     private void loadCards()
     {
-        String[] cardFace = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
-        String[] cardSuits = {"cardSpades", "cardHearts", "cardDiamonds", "cardClubs"};
+//        String[] cardFace = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+//        String[] cardSuits = {"cardSpades", "cardHearts", "cardDiamonds", "cardClubs"};
         String cardBack = "cardBack_";
         String[] cardBackColor = {"green", "red", "blue"};
         String cardBackDesign = "12345";
-
+//
         Image tempCardBack = new Image(getClass().getResourceAsStream("images/cards/" + cardBack + cardBackColor[0] + cardBackDesign.charAt(0) + ".png"));
-        for (String suit : cardSuits) {
-            for (int i = 0; i < cardFace.length / 2; i++) {
-                Image tempImage = new Image(getClass().getResourceAsStream("images/cards/" + suit + cardFace[i] + ".png"));
-                cards.add(new CardTile(suit, cardFace[i], tempCardBack, tempImage, cardsWidth, cardsHeight));
+//        for (String suit : cardSuits) {
+//            for (int i = 0; i < cardFace.length / 2; i++) {
+//                Image tempImage = new Image(getClass().getResourceAsStream("images/cards/" + suit + cardFace[i] + ".png"));
+//                cards.add(new CardTile(suit, cardFace[i], tempCardBack, tempImage, cardsWidth, cardsHeight));
+//            }
+//        }
+
+        String cardSuits = "01";
+        String cardFaces = "012345678";
+        for (int z = 0; z < 2; z++) {
+            for (int i = 0; i < cardSuits.length(); i++) {
+                for (int t = 0; t < cardFaces.length(); t++) {
+                    Image tempImage = new Image(getClass().getResourceAsStream("images/blue_border/pieceBlue_border" + cardSuits.charAt(i) + cardFaces.charAt(t) + ".png"));
+                    cards.add(new CardTile(Character.toString(cardSuits.charAt(i)), Character.toString(cardFaces.charAt(t)), tempCardBack, tempImage, cardsWidth, cardsHeight));
+                }
             }
         }
+
     }
 
     private void createGridPane()

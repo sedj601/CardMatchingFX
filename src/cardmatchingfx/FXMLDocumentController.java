@@ -73,7 +73,7 @@ public class FXMLDocumentController implements Initializable
             for (int i = 0; i < cardSuits.length(); i++) {
                 for (int t = 0; t < cardFaces.length(); t++) {
                     Image tempImage = new Image(getClass().getResourceAsStream("images/blue_border/pieceBlue_border" + cardSuits.charAt(i) + cardFaces.charAt(t) + ".png"));
-                    cards.add(new CardTile(Character.toString(cardSuits.charAt(i)), Character.toString(cardFaces.charAt(t)), tempCardBack, tempImage, cardsWidth, cardsHeight));
+                    cards.add(new CardTile(Character.toString(cardSuits.charAt(i)) + Character.toString(cardFaces.charAt(t)), Character.toString(cardFaces.charAt(t)), tempCardBack, tempImage, cardsWidth, cardsHeight));
                 }
             }
         }
@@ -85,8 +85,8 @@ public class FXMLDocumentController implements Initializable
         GridPane tempGridPane = new GridPane();
 
         for (int i = 0; i < cards.size(); i++) {
-            tempGridPane.add(cards.get(i), i % 13, i / 13);//Add ImageViews to the GridPane
-            System.out.println((i % 13) + " : " + (i / 13));
+            tempGridPane.add(cards.get(i), i % 9, i / 9);//Add ImageViews to the GridPane
+            System.out.println((i % 9) + " : " + (i / 9));
         }
 
         spBoardContainer.getChildren().add(tempGridPane);
@@ -103,7 +103,7 @@ public class FXMLDocumentController implements Initializable
                     cardsBeingMatched.add(view);//Add card being clicked to list so it can be compared against the next card
                     if (cardsBeingMatched.size() == 2)//Once two cards are in the list, see if they are equal.
                     {
-                        if (cardsBeingMatched.get(0).getFace().equals(cardsBeingMatched.get(1).getFace()))//If cards are equal a match is found
+                        if (cardsBeingMatched.get(0).getTitle().equals(cardsBeingMatched.get(1).getTitle()))//If cards are equal a match is found
                         {
                             cardsBeingMatched.get(0).setMatched(true);
                             cardsBeingMatched.get(1).setMatched(true);

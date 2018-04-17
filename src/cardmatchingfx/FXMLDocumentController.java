@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -59,7 +60,7 @@ public class FXMLDocumentController implements Initializable
         String[] cardBackColor = {"green", "red", "blue"};
         String cardBackDesign = "12345";
 //
-        Image tempCardBack = new Image(getClass().getResourceAsStream("images/cards/" + cardBack + cardBackColor[0] + cardBackDesign.charAt(0) + ".png"));
+        Image tempCardBack = new Image(getClass().getResourceAsStream("images/cards/" + cardBack + cardBackColor[1] + cardBackDesign.charAt(4) + ".png"));
 //        for (String suit : cardSuits) {
 //            for (int i = 0; i < cardFace.length / 2; i++) {
 //                Image tempImage = new Image(getClass().getResourceAsStream("images/cards/" + suit + cardFace[i] + ".png"));
@@ -83,6 +84,7 @@ public class FXMLDocumentController implements Initializable
     private void createGridPane()
     {
         GridPane tempGridPane = new GridPane();
+        tempGridPane.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
 
         for (int i = 0; i < cards.size(); i++) {
             tempGridPane.add(cards.get(i), i % 9, i / 9);//Add ImageViews to the GridPane

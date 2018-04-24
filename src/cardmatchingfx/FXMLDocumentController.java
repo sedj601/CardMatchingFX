@@ -7,14 +7,18 @@ package cardmatchingfx;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
+import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -23,6 +27,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.CubicCurveTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
 /**
@@ -42,6 +49,7 @@ public class FXMLDocumentController implements Initializable
     boolean isGameOver = false;
     final double cardsWidth = 50;
     final double cardsHeight = cardsWidth * 1.4;
+    GridPane tempGridPane = new GridPane();
 
     @Override
     public void initialize(URL url, ResourceBundle rb)
@@ -50,6 +58,40 @@ public class FXMLDocumentController implements Initializable
         loadCards();
         createGridPane();
         addMouseClickHandlerToCards();
+    }
+
+    @FXML
+    public void handleBtnShuffle(ActionEvent actionEvent)
+    {
+
+        //tempGridPane.getChildren().clear();
+        //Group group = new Group(tempCardTiles);
+        //paneBlock.getChildren().add(group);
+        //paneBlock.toFront();
+        tempGridPane.getChildren().clear();
+        Collections.shuffle(cards);
+        for (int i = 0; i < cards.size(); i++) {
+            tempGridPane.add(cards.get(i), i % 9, i / 9);//Add ImageViews to the GridPane
+            System.out.println((i % 9) + " : " + (i / 9));
+        }
+
+        final Path path = new Path();
+        path.getElements().add(new MoveTo(70, 20));
+        path.getElements().add(new CubicCurveTo(30, 120, 30, 220, 520, 120));
+        path.getElements().add(new CubicCurveTo(350, 20, 250, 240, 320, 240));
+        path.setOpacity(0.0);
+
+        for (Node node : tempGridPane.getChildren()) {
+            PathTransition pathTransition = new PathTransition();
+            pathTransition.setDuration(Duration.millis(4000));
+            pathTransition.setPath(path);
+            pathTransition.setNode(node);
+            pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
+            pathTransition.setCycleCount(Timeline.INDEFINITE);
+            pathTransition.setAutoReverse(true);
+            pathTransition.play();
+        }
+
     }
 
     private void loadCards()
@@ -83,7 +125,7 @@ public class FXMLDocumentController implements Initializable
 
     private void createGridPane()
     {
-        GridPane tempGridPane = new GridPane();
+
         tempGridPane.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
 
         for (int i = 0; i < cards.size(); i++) {

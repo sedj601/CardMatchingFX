@@ -11,9 +11,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
 import javafx.animation.Timeline;
+import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,12 +26,12 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.CubicCurveTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 
 /**
@@ -42,7 +44,11 @@ public class FXMLDocumentController implements Initializable
     @FXML
     StackPane spBoardContainer;
     @FXML
-    Pane paneBlock;
+    StackPane paneBlock;
+    @FXML
+    AnchorPane apMain;
+//    @FXML
+//    Pane paneShuffle;
 
     List<CardTile> cards = new ArrayList();
     List<CardTile> cardsBeingMatched = new ArrayList();//Used to keep up with the current two cards that are pressed inorder to deteremine if they are a match
@@ -63,35 +69,52 @@ public class FXMLDocumentController implements Initializable
     @FXML
     public void handleBtnShuffle(ActionEvent actionEvent)
     {
-
-        //tempGridPane.getChildren().clear();
-        //Group group = new Group(tempCardTiles);
-        //paneBlock.getChildren().add(group);
-        //paneBlock.toFront();
         tempGridPane.getChildren().clear();
         Collections.shuffle(cards);
+
+        //paneShuffle.getChildren().addAll(cards);
+        Shape path = new Circle(100);
+        paneBlock.getChildren().add(path);
+        path.setFill(Color.BLUE);
+
+        paneBlock.toFront();
+        paneBlock.getChildren().addAll(cards);
+
+        List<Transition> transitions = new ArrayList();
+
         for (int i = 0; i < cards.size(); i++) {
-            tempGridPane.add(cards.get(i), i % 9, i / 9);//Add ImageViews to the GridPane
-            System.out.println((i % 9) + " : " + (i / 9));
+            Transition transition = createPathTransition(path, cards.get(i));
+            transition.jumpTo(Duration.seconds(2).multiply(i * 1.0 / cards.size()));
+            transitions.add(transition);
         }
 
-        final Path path = new Path();
-        path.getElements().add(new MoveTo(70, 20));
-        path.getElements().add(new CubicCurveTo(30, 120, 30, 220, 520, 120));
-        path.getElements().add(new CubicCurveTo(350, 20, 250, 240, 320, 240));
-        path.setOpacity(0.0);
-
-        for (Node node : tempGridPane.getChildren()) {
-            PathTransition pathTransition = new PathTransition();
-            pathTransition.setDuration(Duration.millis(4000));
-            pathTransition.setPath(path);
-            pathTransition.setNode(node);
-            pathTransition.setOrientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT);
-            pathTransition.setCycleCount(Timeline.INDEFINITE);
-            pathTransition.setAutoReverse(true);
-            pathTransition.play();
+        for (int i = 0; i < cards.size(); i++) {
+            final int t = i;
+            transitions.get(i).setOnFinished((event) -> {
+                tempGridPane.add(cards.get(t), t % 9, t / 9);
+                if (t == cards.size() - 1) {
+                    paneBlock.toBack();
+                }
+            });
+            transitions.get(i).play();
         }
 
+    }
+
+    private PathTransition createPathTransition(Shape shape, Node node)
+    {
+
+        final PathTransition transition = new PathTransition(
+                Duration.seconds(1),
+                shape,
+                node
+        );
+
+        transition.setAutoReverse(false);
+        transition.setCycleCount(5);
+        transition.setInterpolator(Interpolator.LINEAR);
+
+        return transition;
     }
 
     private void loadCards()
@@ -125,7 +148,6 @@ public class FXMLDocumentController implements Initializable
 
     private void createGridPane()
     {
-
         tempGridPane.setMaxSize(Control.USE_PREF_SIZE, Control.USE_PREF_SIZE);
 
         for (int i = 0; i < cards.size(); i++) {
